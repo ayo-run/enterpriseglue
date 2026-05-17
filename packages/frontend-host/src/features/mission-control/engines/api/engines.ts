@@ -5,6 +5,12 @@ export type Engine = {
   id: string
   name: string
   baseUrl: string
+  type?: 'ion' | 'operaton' | 'camunda7'
+  authType?: 'none' | 'basic' | 'bearer' | 'oauth2-client-credentials'
+  username?: string
+  oauthTokenUrl?: string
+  oauthScopes?: string
+  oauthAudience?: string
   tenantId?: string
   createdAt: string
   updatedAt: string

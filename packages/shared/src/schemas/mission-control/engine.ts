@@ -1,6 +1,16 @@
 import { z } from 'zod';
 import { toTimestamp, nullToUndefined } from '@enterpriseglue/shared/utils/schema-helpers.js';
 
+export const EngineTypeSchema = z.enum(['ion', 'operaton', 'camunda7']);
+export type EngineType = z.infer<typeof EngineTypeSchema>;
+export const EngineAuthTypeSchema = z.enum(['none', 'basic', 'bearer', 'oauth2-client-credentials']);
+export type EngineAuthType = z.infer<typeof EngineAuthTypeSchema>;
+
+export function normalizeEngineType(value: unknown): EngineType {
+  const parsed = EngineTypeSchema.safeParse(value ?? 'camunda7');
+  return parsed.success ? parsed.data : 'camunda7';
+}
+
 // Raw schema - matches TypeORM Engine entity
 export const EngineSchemaRaw = z.object({
   id: z.string(),
@@ -10,6 +20,9 @@ export const EngineSchemaRaw = z.object({
   authType: z.string().nullable(),
   username: z.string().nullable(),
   passwordEnc: z.string().nullable(),
+  oauthTokenUrl: z.string().nullable().optional(),
+  oauthScopes: z.string().nullable().optional(),
+  oauthAudience: z.string().nullable().optional(),
   active: z.boolean().nullable(),
   version: z.string().nullable(),
   ownerId: z.string().nullable().optional(),
@@ -25,10 +38,13 @@ export const EngineSchema = EngineSchemaRaw.transform((e) => ({
   id: e.id,
   name: e.name,
   baseUrl: e.baseUrl,
-  type: e.type as 'camunda7' | 'operaton' | undefined,
-  authType: e.authType as 'none' | 'basic' | undefined,
+  type: normalizeEngineType(e.type),
+  authType: e.authType as EngineAuthType | undefined,
   username: nullToUndefined(e.username),
   passwordEnc: nullToUndefined(e.passwordEnc),
+  oauthTokenUrl: nullToUndefined(e.oauthTokenUrl ?? null),
+  oauthScopes: nullToUndefined(e.oauthScopes ?? null),
+  oauthAudience: nullToUndefined(e.oauthAudience ?? null),
   active: Boolean(e.active),
   version: nullToUndefined(e.version),
   createdAt: toTimestamp(e.createdAt),
@@ -39,10 +55,13 @@ export const EngineInsertSchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().min(1),
   baseUrl: z.string().url(),
-  type: z.enum(['camunda7', 'operaton']).optional(),
-  authType: z.enum(['none', 'basic']).optional(),
+  type: EngineTypeSchema.optional(),
+  authType: EngineAuthTypeSchema.optional(),
   username: z.string().optional(),
   passwordEnc: z.string().optional(),
+  oauthTokenUrl: z.string().url().optional(),
+  oauthScopes: z.string().optional(),
+  oauthAudience: z.string().optional(),
   active: z.boolean().optional(),
   version: z.string().optional(),
   createdAt: z.number().optional(),

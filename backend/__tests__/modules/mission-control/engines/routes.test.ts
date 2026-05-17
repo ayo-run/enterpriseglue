@@ -81,7 +81,18 @@ describe('mission-control engines routes', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
-      { id: 'e1', name: 'Engine 1', myRole: 'admin', username: null, passwordEnc: null },
+      expect.objectContaining({
+        id: 'e1',
+        name: 'Engine 1',
+        myRole: 'admin',
+        username: null,
+        passwordEnc: null,
+        capabilities: expect.objectContaining({
+          type: 'camunda7',
+          compatibilityProfile: 'camunda7-rest',
+          supportLevel: 'compatible',
+        }),
+      }),
     ]);
   });
 
@@ -103,5 +114,85 @@ describe('mission-control engines routes', () => {
     expect(response.status).toBe(400);
     expect(response.body).toMatchObject({ field: 'baseUrl' });
     expect(String(response.body.error || '')).toContain('host.docker.internal:8080/engine-rest');
+  });
+
+  it('accepts ION, Operaton, and Camunda 7 engine types', async () => {
+    const insert = vi.fn().mockResolvedValue({});
+    (getDataSource as any).mockResolvedValue({
+      getRepository: () => ({
+        insert,
+      }),
+    });
+
+    for (const type of ['ion', 'operaton', 'camunda7']) {
+      const response = await request(app)
+        .post('/engines-api/engines')
+        .send({ name: `${type} engine`, baseUrl: `https://${type}.example.com/engine-rest`, type });
+
+      expect(response.status).toBe(201);
+      expect(response.body).toMatchObject({ type });
+    }
+
+    expect(insert).toHaveBeenCalledTimes(3);
+  });
+
+  it('defaults newly registered engines to ION when type is omitted', async () => {
+    const insert = vi.fn().mockResolvedValue({});
+    (getDataSource as any).mockResolvedValue({
+      getRepository: () => ({
+        insert,
+      }),
+    });
+
+    const response = await request(app)
+      .post('/engines-api/engines')
+      .send({ name: 'Default engine', baseUrl: 'https://ion.example.com/engine-rest' });
+
+    expect(response.status).toBe(201);
+    expect(response.body).toMatchObject({ type: 'ion' });
+    expect(insert).toHaveBeenCalledWith(expect.objectContaining({ type: 'ion' }));
+  });
+
+  it('accepts OAuth2 client credentials engine auth metadata', async () => {
+    const insert = vi.fn().mockResolvedValue({});
+    (getDataSource as any).mockResolvedValue({
+      getRepository: () => ({
+        insert,
+      }),
+    });
+
+    const response = await request(app)
+      .post('/engines-api/engines')
+      .send({
+        name: 'Keycloak engine',
+        baseUrl: 'https://ion.example.com/engine-rest',
+        type: 'ion',
+        authType: 'oauth2-client-credentials',
+        username: 'enterpriseglue',
+        passwordEnc: 'client-secret',
+        oauthTokenUrl: 'https://keycloak.example.com/realms/acme/protocol/openid-connect/token',
+        oauthScopes: 'engine-rest',
+        oauthAudience: 'ion-engine',
+      });
+
+    expect(response.status).toBe(201);
+    expect(insert).toHaveBeenCalledWith(expect.objectContaining({
+      authType: 'oauth2-client-credentials',
+      oauthTokenUrl: 'https://keycloak.example.com/realms/acme/protocol/openid-connect/token',
+      oauthScopes: 'engine-rest',
+      oauthAudience: 'ion-engine',
+    }));
+  });
+
+  it('rejects unsupported engine type values', async () => {
+    const response = await request(app)
+      .post('/engines-api/engines')
+      .send({ name: 'Unsupported engine', baseUrl: 'https://engine.example.com/engine-rest', type: 'camunda8' });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toMatchObject({ error: 'Validation failed' });
+    expect(response.body.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ path: 'type' }),
+    ]));
   });
 });

@@ -101,7 +101,7 @@ export const updateMemberRoleBodySchema = z.object({
 });
 
 // === Engine Schemas ===
-export const engineTypeSchema = z.enum(['camunda7', 'camunda8']);
+export const engineTypeSchema = z.enum(['ion', 'operaton', 'camunda7']);
 
 const isLocalOrPrivate = (raw: string): boolean => {
   try {
@@ -122,10 +122,13 @@ const engineBaseUrlSchema = z.string().url().refine(
 export const createEngineBodySchema = z.object({
   name: z.string().min(1).max(255),
   baseUrl: engineBaseUrlSchema,
-  type: engineTypeSchema.default('camunda7'),
-  authType: z.enum(['none', 'basic', 'bearer']).default('none'),
+  type: engineTypeSchema.default('ion'),
+  authType: z.enum(['none', 'basic', 'bearer', 'oauth2-client-credentials']).default('none'),
   username: z.string().nullable().optional(),
   passwordEnc: z.string().nullable().optional(),
+  oauthTokenUrl: z.string().url().nullable().optional(),
+  oauthScopes: z.string().nullable().optional(),
+  oauthAudience: z.string().nullable().optional(),
   active: z.boolean().default(false),
   version: z.string().nullable().optional(),
 });
