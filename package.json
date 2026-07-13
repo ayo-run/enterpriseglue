@@ -48,14 +48,14 @@
     "ci:watch:trigger": "bash ./scripts/ci-watch.sh docker-images --trigger"
   },
   "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^8.4.3",
-    "simple-git": "^3.32.3",
-    "uuid": "^14.0.0",
-    "zod": "^4.3.6"
+    "@asteasolutions/zod-to-openapi": "^8.5.0",
+    "simple-git": "^3.36.0",
+    "uuid": "^14.0.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.59.1",
-    "pg": "^8.11.3"
+    "@playwright/test": "^1.61.1",
+    "pg": "^8.22.0"
   },
   "overrides": {
     "@types/express": "5.0.6",
