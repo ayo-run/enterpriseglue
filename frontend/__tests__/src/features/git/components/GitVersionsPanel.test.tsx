@@ -166,7 +166,7 @@ describe('GitVersionsPanel', () => {
   }
 
   it('hides system versions by default while preserving file-version and project-version labels', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderPanel();
 
     await waitFor(() => {

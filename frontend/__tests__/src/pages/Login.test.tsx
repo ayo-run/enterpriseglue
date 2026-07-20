@@ -58,7 +58,7 @@ describe('Login', () => {
   });
 
   it('submits credentials when form is filled', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     const qc = new QueryClient({
       defaultOptions: { queries: { retry: false } },

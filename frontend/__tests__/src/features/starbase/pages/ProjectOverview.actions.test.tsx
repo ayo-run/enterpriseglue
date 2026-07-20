@@ -138,6 +138,7 @@ describe('ProjectOverview actions', () => {
   });
 
   it('opens create project modal from toolbar', async () => {
+    const user = userEvent.setup({ delay: null });
     renderWithProviders();
 
     await waitFor(() => {
@@ -145,12 +146,15 @@ describe('ProjectOverview actions', () => {
     });
 
     const newButton = screen.getByRole('button', { name: /new project/i });
-    await userEvent.click(newButton);
+    await user.click(newButton);
 
     expect(Boolean(screen.getByRole('heading', { name: /create project/i }))).toBe(true);
   });
 
+  // Types 16 characters across several interaction round-trips, making it the slowest test in
+  // the suite; it still exceeds the 5s default under parallel load even with delay: null.
   it('renames a project via inline edit', { timeout: 15_000 }, async () => {
+    const user = userEvent.setup({ delay: null });
     renderWithProviders();
 
     await waitFor(() => {
@@ -158,14 +162,14 @@ describe('ProjectOverview actions', () => {
     });
 
     const overflowButton = screen.getByRole('button', { name: /options/i });
-    await userEvent.click(overflowButton);
+    await user.click(overflowButton);
 
     const renameOption = await screen.findByText('Rename');
-    await userEvent.click(renameOption);
+    await user.click(renameOption);
 
     const nameInput = screen.getByDisplayValue('Alpha Project');
-    await userEvent.clear(nameInput);
-    await userEvent.type(nameInput, 'Renamed Project{enter}');
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Renamed Project{enter}');
 
     await waitFor(() => {
       expect(Boolean(screen.queryByDisplayValue('Renamed Project'))).toBe(false);
@@ -176,6 +180,7 @@ describe('ProjectOverview actions', () => {
     const getBlobSpy = vi.spyOn(apiClient, 'getBlob').mockResolvedValue(new Blob(['zip']));
     (globalThis.URL as any).createObjectURL = vi.fn(() => 'blob:mock');
     (globalThis.URL as any).revokeObjectURL = vi.fn();
+    const user = userEvent.setup({ delay: null });
     renderWithProviders();
 
     await waitFor(() => {
@@ -183,10 +188,10 @@ describe('ProjectOverview actions', () => {
     });
 
     const overflowButton = screen.getByRole('button', { name: /options/i });
-    await userEvent.click(overflowButton);
+    await user.click(overflowButton);
 
     const downloadOption = await screen.findByText('Download');
-    await userEvent.click(downloadOption);
+    await user.click(downloadOption);
 
     await waitFor(() => {
       expect(getBlobSpy).toHaveBeenCalledWith('/starbase-api/projects/project-1/download');

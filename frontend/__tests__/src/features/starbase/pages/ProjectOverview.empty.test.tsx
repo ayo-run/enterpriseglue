@@ -56,7 +56,7 @@ describe('ProjectOverview empty state', () => {
       expect(Boolean(screen.getByText(/No project yet/i))).toBe(true);
     });
 
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     await user.click(screen.getByRole('button', { name: /create project/i }));
 
     expect(Boolean(screen.getByRole('heading', { name: /create project/i }))).toBe(true);

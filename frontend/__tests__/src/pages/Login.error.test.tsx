@@ -42,7 +42,7 @@ describe('Login error state', () => {
   });
 
   it('shows error when login fails', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     const qc = new QueryClient({
       defaultOptions: { queries: { retry: false } },

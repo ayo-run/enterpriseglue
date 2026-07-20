@@ -80,7 +80,7 @@ describe('AcceptInvite', () => {
     });
     (apiClient.post as any).mockResolvedValue({ requiresPasswordSet: true, tenantSlug: 'default', deliveryMethod: 'email' });
 
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderPage();
 
     await waitFor(() => expect(screen.getByRole('button', { name: /continue to account setup/i })).toBeInTheDocument());
@@ -110,7 +110,7 @@ describe('AcceptInvite', () => {
     });
     (apiClient.post as any).mockResolvedValue({ requiresPasswordSet: true, tenantSlug: 'default', deliveryMethod: 'manual' });
 
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderPage();
 
     await waitFor(() => expect(screen.getByLabelText(/one-time password/i)).toBeInTheDocument());

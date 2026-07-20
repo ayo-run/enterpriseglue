@@ -42,7 +42,7 @@ describe('PasswordResetWithToken', () => {
     (authService.verifyResetToken as unknown as Mock).mockResolvedValue({ valid: true });
     (authService.resetPasswordWithToken as unknown as Mock).mockResolvedValue(undefined);
 
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     render(
       <MemoryRouter initialEntries={['/password-reset?token=valid']}> 

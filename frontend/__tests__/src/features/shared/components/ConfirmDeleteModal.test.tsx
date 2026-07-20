@@ -51,7 +51,7 @@ describe('ConfirmDeleteModal', () => {
 
   it('calls onCancel when cancel is clicked', async () => {
     const onCancel = vi.fn();
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     render(
       <ConfirmDeleteModal
@@ -70,7 +70,7 @@ describe('ConfirmDeleteModal', () => {
 
   it('calls onConfirm when confirm is clicked', async () => {
     const onConfirm = vi.fn();
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     render(
       <ConfirmDeleteModal

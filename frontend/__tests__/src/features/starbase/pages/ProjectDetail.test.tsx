@@ -211,25 +211,27 @@ describe('ProjectDetail', () => {
   })
 
   it('opens the file delete confirmation modal from table actions', async () => {
+    const user = userEvent.setup({ delay: null })
     renderWithProviders()
 
     await waitFor(() => {
       expect(screen.getByText('Alpha.bpmn')).toBeDefined()
     })
 
-    await userEvent.click(screen.getByRole('button', { name: /trigger delete/i }))
+    await user.click(screen.getByRole('button', { name: /trigger delete/i }))
 
     expect(await screen.findByText(/you're about to delete the file "Alpha\.bpmn"\./i)).toBeDefined()
   })
 
   it('opens the move modal from table actions', async () => {
+    const user = userEvent.setup({ delay: null })
     renderWithProviders()
 
     await waitFor(() => {
       expect(screen.getByText('Alpha.bpmn')).toBeDefined()
     })
 
-    await userEvent.click(screen.getByRole('button', { name: /trigger move/i }))
+    await user.click(screen.getByRole('button', { name: /trigger move/i }))
 
     expect(await screen.findByText(/move file/i)).toBeDefined()
     expect(await screen.findByText(/select a destination for "Alpha\.bpmn"\./i)).toBeDefined()
@@ -246,13 +248,14 @@ describe('ProjectDetail', () => {
       downloadedFilename = this.download
     })
 
+    const user = userEvent.setup({ delay: null })
     renderWithProviders()
 
     await waitFor(() => {
       expect(screen.getByText('Alpha')).toBeDefined()
     })
 
-    await userEvent.click(screen.getByRole('button', { name: /trigger download/i }))
+    await user.click(screen.getByRole('button', { name: /trigger download/i }))
 
     await waitFor(() => {
       expect(apiClient.getBlob).toHaveBeenCalledWith('/starbase-api/files/file-1/download')
@@ -273,13 +276,14 @@ describe('ProjectDetail', () => {
       downloadedFilename = this.download
     })
 
+    const user = userEvent.setup({ delay: null })
     renderWithProviders()
 
     await waitFor(() => {
       expect(screen.getByText('Team/Alpha')).toBeDefined()
     })
 
-    await userEvent.click(screen.getByRole('button', { name: /trigger download/i }))
+    await user.click(screen.getByRole('button', { name: /trigger download/i }))
 
     await waitFor(() => {
       expect(apiClient.getBlob).toHaveBeenCalledWith('/starbase-api/files/file-1/download')
@@ -292,17 +296,18 @@ describe('ProjectDetail', () => {
   it('confirms and executes batch delete from selected items', async () => {
     vi.mocked(apiClient.delete).mockResolvedValue(undefined as any)
 
+    const user = userEvent.setup({ delay: null })
     renderWithProviders()
 
     await waitFor(() => {
       expect(screen.getByText('Alpha.bpmn')).toBeDefined()
     })
 
-    await userEvent.click(screen.getByRole('button', { name: /trigger batch delete/i }))
+    await user.click(screen.getByRole('button', { name: /trigger batch delete/i }))
 
     expect(await screen.findByText(/you're about to delete 1 selected item\./i)).toBeDefined()
 
-    await userEvent.click(screen.getByRole('button', { name: /delete selected/i }))
+    await user.click(screen.getByRole('button', { name: /delete selected/i }))
 
     await waitFor(() => {
       expect(apiClient.delete).toHaveBeenCalledWith('/starbase-api/files/file-1')

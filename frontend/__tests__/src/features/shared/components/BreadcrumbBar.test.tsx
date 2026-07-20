@@ -33,7 +33,7 @@ describe('BreadcrumbBar', () => {
   });
 
   it('collapses middle breadcrumb items into an overflow menu and preserves their actions', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const onMiddleClick = vi.fn();
 
     render(

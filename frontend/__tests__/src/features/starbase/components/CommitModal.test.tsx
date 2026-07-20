@@ -71,7 +71,7 @@ describe('CommitModal', () => {
   }
 
   it('posts to the VCS commit endpoint in git mode', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal({ saveMode: 'git' });
 
     await user.type(screen.getByLabelText(/version description/i), 'Git save');
@@ -86,7 +86,7 @@ describe('CommitModal', () => {
   });
 
   it('posts to the local versions endpoint in local mode', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const { invalidateQueriesSpy } = renderModal({ saveMode: 'local' });
 
     await user.type(screen.getByLabelText(/version description/i), 'Local save');

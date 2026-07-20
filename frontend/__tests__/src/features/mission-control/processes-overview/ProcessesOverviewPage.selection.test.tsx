@@ -96,7 +96,7 @@ describe('ProcessesOverviewPage selection', () => {
     const qc = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     render(
       <QueryClientProvider client={qc}>

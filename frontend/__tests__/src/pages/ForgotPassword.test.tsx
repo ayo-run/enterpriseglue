@@ -25,7 +25,7 @@ describe('ForgotPassword', () => {
 
   it('submits forgot password request', async () => {
     (authService.forgotPassword as unknown as Mock).mockResolvedValue(undefined);
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     render(
       <MemoryRouter initialEntries={['/forgot-password']}>

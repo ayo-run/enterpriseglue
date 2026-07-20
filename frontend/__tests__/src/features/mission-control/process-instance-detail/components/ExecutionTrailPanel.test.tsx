@@ -104,7 +104,7 @@ describe('ExecutionTrailPanel', () => {
   });
 
   it('loads execution drilldown lazily only after the details action is opened', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     renderExecutionTrail();
 
@@ -125,7 +125,7 @@ describe('ExecutionTrailPanel', () => {
   });
 
   it('selects an execution when clicking the row body up to the kebab menu', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const onActivityClick = vi.fn();
 
     renderExecutionTrail({ onActivityClick });

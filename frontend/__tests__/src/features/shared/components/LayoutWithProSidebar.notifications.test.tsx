@@ -111,7 +111,7 @@ describe('LayoutWithProSidebar notifications', () => {
 
     renderWithProviders()
 
-    const user = userEvent.setup()
+    const user = userEvent.setup({ delay: null })
     await user.click(screen.getByLabelText('Notifications'))
 
     await waitFor(() => {
@@ -146,7 +146,7 @@ describe('LayoutWithProSidebar notifications', () => {
 
     renderWithProviders()
 
-    const user = userEvent.setup()
+    const user = userEvent.setup({ delay: null })
     await user.click(screen.getByLabelText('Notifications'))
 
     await waitFor(() => {
