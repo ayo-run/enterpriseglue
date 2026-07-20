@@ -6,7 +6,7 @@ WORKDIR /repo
 RUN npm install -g pnpm@11.0.8
 
 # Copy workspace manifests for pnpm install
-COPY --chown=node:node package.json pnpm-lock.yaml ./
+COPY --chown=node:node package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY --chown=node:node backend/package.json backend/
 COPY --chown=node:node packages/shared/package.json packages/shared/
 COPY --chown=node:node packages/backend-host/package.json packages/backend-host/
@@ -16,6 +16,8 @@ COPY --chown=node:node frontend/package.json frontend/
 
 RUN apk upgrade --no-cache zlib \
     && pnpm install --frozen-lockfile
+
+RUN chown -R node:node /repo/node_modules
 
 COPY --chown=node:node backend backend
 
